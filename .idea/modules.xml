@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/homebanking.iml" filepath="$PROJECT_DIR$/.idea/homebanking.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/homebanking.iml" filepath="$PROJECT_DIR$/.idea/modules/homebanking.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/homebanking.main.iml" filepath="$PROJECT_DIR$/.idea/modules/homebanking.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/homebanking.test.iml" filepath="$PROJECT_DIR$/.idea/modules/homebanking.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/homebanking_Ozuna.iml" filepath="$PROJECT_DIR$/.idea/homebanking_Ozuna.iml" />
     </modules>
   </component>
 </project>
