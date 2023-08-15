@@ -1,6 +1,7 @@
 package com.mindhub.homebanking.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -25,10 +26,11 @@ public class Loan {
    @Column(name = "payment")
    private List<Integer> payments= new ArrayList<>();
 
-   @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
-   List<ClientLoan> clientLoans = new ArrayList<>();
 
-   public Loan(){}
+   @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
+   private Set<ClientLoan> clientLoans  = new HashSet<>();;
+
+   public Loan(){ }
 
    public Loan(String name, double maxAmount, List<Integer> payments){
       this.name= name;
@@ -60,11 +62,15 @@ public class Loan {
       this.payments = payments;
    }
 
-   public List<ClientLoan> getClientLoans() {
+   public long getId() {
+      return id;
+   }
+
+   public Set<ClientLoan> getClientLoans() {
       return clientLoans;
    }
 
-   public void setClientLoans(List<ClientLoan> clientLoans) {
+   public void setClientLoans(Set<ClientLoan> clientLoans) {
       this.clientLoans = clientLoans;
    }
 
@@ -73,9 +79,10 @@ public class Loan {
       clientLoans.add(clientLoan);
    }
 
-   public List<Client> getClients(){
+
+   public Set<Client> getClients(){
       return clientLoans.stream()
               .map(elements->elements.getClient())
-                      .collect(toList());
+                      .collect(toSet());
    }
 }

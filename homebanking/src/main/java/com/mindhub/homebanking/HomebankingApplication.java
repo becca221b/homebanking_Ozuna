@@ -1,10 +1,7 @@
 package com.mindhub.homebanking;
 
 import com.mindhub.homebanking.models.*;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
-import com.mindhub.homebanking.repositories.LoanRepository;
-import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,7 +18,7 @@ public class HomebankingApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository) {
+	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository) {
 		return (args) -> {
 			// save a couple of customers
 
@@ -61,8 +58,22 @@ public class HomebankingApplication {
 			loanRepository.save(loan2);
 			loanRepository.save(loan3);
 
-            ClientLoan clientLoan1= new ClientLoan(client1,loan1);
-            ClientLoan clientLoan2= new ClientLoan(client1,loan2);
+            ClientLoan clientLoan1= new ClientLoan(400000,60);
+            ClientLoan clientLoan2= new ClientLoan( 50000, 12);
+
+			client1.addClientLoan(clientLoan1);
+			client1.addClientLoan(clientLoan2);
+			loan1.addClientLoan(clientLoan1);
+			loan2.addClientLoan(clientLoan2);
+
+
+            clientLoanRepository.save(clientLoan1);
+            clientLoanRepository.save(clientLoan2);
+
+			clientRepository.save(client1);
+
+
+
 
 		};
 	}

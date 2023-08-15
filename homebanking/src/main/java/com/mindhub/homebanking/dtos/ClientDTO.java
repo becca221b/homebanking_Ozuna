@@ -17,6 +17,8 @@ public class ClientDTO {
 
     private Set<AccountDTO> accounts;
 
+    private Set<ClientLoanDTO> loans;
+
 
     public ClientDTO(Client client){
         id= client.getId();
@@ -24,6 +26,7 @@ public class ClientDTO {
         lastName= client.getLastName();
         email= client.getEmail();
         accounts= client.getAccounts().stream().map(element-> new AccountDTO(element)).collect(Collectors.toSet());
+        loans= client.getClientLoans().stream().map(element-> new ClientLoanDTO(element)).collect(Collectors.toSet());
     }
 
     public long getId() {
