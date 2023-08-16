@@ -23,10 +23,13 @@ public class HomebankingApplication {
 			// save a couple of customers
 
 			Client client1= new Client("Melba", "Morel","melba@mindhub.com");
-			clientRepository.save(client1);
+			Client client2= new Client("Lionel","Messi","lio.10@yahoo.com.ar");
+            clientRepository.save(client1);
+            clientRepository.save(client2);
 
 			Account account1= new Account();
 			Account account2= new Account();
+            Account account3= new Account("VIN003",10000);
 
 			account1.setDate(LocalDate.now());
 			account1.setBalance(5000);
@@ -38,9 +41,12 @@ public class HomebankingApplication {
 
 			client1.addAccount(account1);
 			client1.addAccount(account2);
+            client2.addAccount(account3);
+
 
 			accountRepository.save(account1);
 			accountRepository.save(account2);
+            accountRepository.save(account3);
 
 			Transaction transaction1= new Transaction(2500,"laundry",TransactionType.DEBITO);
 			account1.addTransaction(transaction1);
@@ -60,17 +66,26 @@ public class HomebankingApplication {
 
             ClientLoan clientLoan1= new ClientLoan(400000,60);
             ClientLoan clientLoan2= new ClientLoan( 50000, 12);
+            ClientLoan clientLoan3= new ClientLoan(100000,24);
+            ClientLoan clientLoan4= new ClientLoan(200000,36);
 
 			client1.addClientLoan(clientLoan1);
 			client1.addClientLoan(clientLoan2);
+            client2.addClientLoan(clientLoan3);
+            client2.addClientLoan(clientLoan4);
+
 			loan1.addClientLoan(clientLoan1);
 			loan2.addClientLoan(clientLoan2);
+            loan2.addClientLoan(clientLoan3);
+            loan3.addClientLoan(clientLoan4);
 
 
             clientLoanRepository.save(clientLoan1);
             clientLoanRepository.save(clientLoan2);
+            clientLoanRepository.save(clientLoan3);
+            clientLoanRepository.save(clientLoan4);
 
-			clientRepository.save(client1);
+			//clientRepository.save(client1);
 
 
 

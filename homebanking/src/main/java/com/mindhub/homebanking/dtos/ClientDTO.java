@@ -48,4 +48,8 @@ public class ClientDTO {
     public Set<AccountDTO> getAccounts() {
         return accounts;
     }
+
+    public Set<ClientLoanDTO> getLoans() {
+        return loans;
+    }
 }

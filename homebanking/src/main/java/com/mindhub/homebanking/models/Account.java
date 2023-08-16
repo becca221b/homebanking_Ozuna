@@ -31,6 +31,12 @@ public class Account {
 
     public Account(){}
 
+    public Account(String number, double balance){
+        this.number= number;
+        this.balance= balance;
+        date= LocalDate.now();
+    }
+
 
 
     public String getNumber() {

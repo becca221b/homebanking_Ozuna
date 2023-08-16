@@ -22,18 +22,37 @@ public class ClientLoanDTO {
 
     double payments;
 
-    private Client client;
 
-    private Loan loan;
 
 
 
     public ClientLoanDTO(ClientLoan clientLoan){
         id= clientLoan.getId();
-        loan_id= loan.getId();
-        name= loan.getName();
+        loan_id= clientLoan.getLoan().getId();
+        name= clientLoan.getLoan().getName();
         amount= clientLoan.getAmount();
         payments= clientLoan.getPayments();
+
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public long getLoan_id() {
+        return loan_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public double getPayments() {
+        return payments;
     }
 
 
