@@ -30,7 +30,7 @@ public class Transaction {
     }
     public Transaction(double amount, String description, TransactionType type){
         this.date= LocalDateTime.now();
-        if (type==TransactionType.DEBITO) {
+        if (type==TransactionType.DEBIT) {
             this.amount= amount*(-1);
         }else{
             this.amount= amount;
