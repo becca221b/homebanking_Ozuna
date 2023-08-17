@@ -17,9 +17,9 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO,generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
-    String number;
-    LocalDate date;
-    double balance;
+    private String number;
+    private LocalDate date;
+    private double balance;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")

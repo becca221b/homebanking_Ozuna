@@ -14,9 +14,9 @@ public class ClientLoan {
     @GenericGenerator(name="native",strategy = "native")
     private long id;
 
-    double amount;
+    private double amount;
 
-    double payments;
+    private double payments;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="client_id")
