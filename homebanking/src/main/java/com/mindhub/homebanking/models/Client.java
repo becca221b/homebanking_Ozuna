@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.List;
 
-import static java.util.stream.Collectors.toList;
+
 import static java.util.stream.Collectors.toSet;
 
 @Entity
@@ -18,10 +16,14 @@ public class  Client {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
+
     private String firstName;
+
     private String lastName;
 
     private String email;
+
+    private String password;
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     Set<Account> accounts = new HashSet<>();
@@ -35,10 +37,11 @@ public class  Client {
 
     public Client() { }
 
-    public Client(String first, String last, String mail) {
+    public Client(String first, String last, String mail, String password) {
         this.firstName = first;
         this.lastName = last;
         this.email = mail;
+        this.password=  password;
     }
 
     public long getId() {
@@ -108,6 +111,14 @@ public class  Client {
 
     public Set<Card> getCards() {
         return cards;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
 
