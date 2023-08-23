@@ -29,7 +29,7 @@ public class WebAuthorization {
                 .antMatchers("/rest/**", "/h2-console").hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.GET,"/api/clients").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
-                .antMatchers("/web/index.html","/web/js/index.js").permitAll()
+                .antMatchers("/web/index.html","/web/js/index.js","/web/css/style.css","/web/img/**").permitAll()
 
                 .antMatchers("/**").hasAuthority("CLIENT");
 

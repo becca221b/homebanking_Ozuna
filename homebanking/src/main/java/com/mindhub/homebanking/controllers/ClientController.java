@@ -5,11 +5,9 @@ import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.ClientRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -79,17 +77,13 @@ public class ClientController {
 
     }
 
-    @RequestMapping("/current")
+    @RequestMapping("clients/current")
+    public ClientDTO getClient(Authentication authentication) {
 
-    public Client getAll(Authentication authentication) {
-
-        return clientRepository.findByEmail(authentication.getName());
+        return new ClientDTO(clientRepository.findByEmail(authentication.getName()));
 
     }
 
-    public ClientDTO fromDTO(ClientDTO objDTO){
-        return objDTO;
-    }
 
 
 }
