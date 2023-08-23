@@ -11,7 +11,7 @@ createApp({
     methods: {
         getData() {
 
-            axios.get("/api/clients/1")
+            axios.get("/api/clients/current")
                 .then((response) => {
                     //get client ifo
                     this.clientInfo = response.data;

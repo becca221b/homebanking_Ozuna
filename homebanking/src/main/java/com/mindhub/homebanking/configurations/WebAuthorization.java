@@ -2,6 +2,7 @@ package com.mindhub.homebanking.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -26,9 +27,13 @@ public class WebAuthorization {
 
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .antMatchers("/rest/**", "/h2-console").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.GET,"/api/clients").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
                 .antMatchers("/web/index.html","/web/js/index.js").permitAll()
 
                 .antMatchers("/**").hasAuthority("CLIENT");
+
+
 
 
         http.formLogin()
