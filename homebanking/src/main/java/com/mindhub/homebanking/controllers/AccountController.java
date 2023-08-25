@@ -20,8 +20,7 @@ import java.util.stream.Collectors;
 public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
-
-    @Autowired
+    
     private Client client;
 
     @RequestMapping("/accounts")//GET
