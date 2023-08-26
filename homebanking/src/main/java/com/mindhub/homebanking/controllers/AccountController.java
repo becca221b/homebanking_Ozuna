@@ -6,9 +6,11 @@ import com.mindhub.homebanking.dtos.ClientDTO;
 import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.AccountRepository;
+import com.mindhub.homebanking.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,8 +22,11 @@ import java.util.stream.Collectors;
 public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
-    
+
     private Client client;
+
+    private ClientRepository clientRepository;
+
 
     @RequestMapping("/accounts")//GET
     //servlet
@@ -40,21 +45,23 @@ public class AccountController {
         return new AccountDTO(accountRepository.findById(id).orElse(null));
     }
 
+
+
     @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.POST)
 
     public ResponseEntity<Object> createAccount(
-
+            /*
             @RequestParam String number, @RequestParam LocalDate date,
 
-            @RequestParam double balance) {
+            @RequestParam double balance*/) {
 
 
-
+        /*
         if (client.getAccounts().size()==3) {
 
             return new ResponseEntity<>("403 prohibido", HttpStatus.FORBIDDEN);
 
-        }
+        }*/
 
 
         accountRepository.save(new Account("VIN005",0.00));
@@ -62,5 +69,12 @@ public class AccountController {
         return new ResponseEntity<>("201 creada",HttpStatus.CREATED);
 
     }
+
+    @RequestMapping("accounts/current")
+    public AccountDTO getAccount(Authentication authentication) {
+
+        return new AccountDTO(accountRepository.findByNumber(authentication.getName()));
+    }
+
 
 }

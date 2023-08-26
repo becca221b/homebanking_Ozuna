@@ -71,6 +71,7 @@
                         <ul class="nav nav-pills flex-column mb-auto">
                             <button class="btn btn-danger img-fluid" type="submit">Sign out</button>
                         </ul>
+                        </form>
                     </div>
                 </div>
                 <div class="col">
@@ -82,7 +83,8 @@
                     <div class="row mt-3">
                         <div class="col">
                             <h2 class="display-6 subtitle">Accounts</h2>
-
+                            <button v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3"
+                                    v-on:click="create" id="create" class="btn btn-sm btn-success">Create</button>
                         </div>
                         <div class="row mx-2">
                             <div v-for="account in clientInfo.accounts" class="col-12 col-md-4 mt-2 ">
