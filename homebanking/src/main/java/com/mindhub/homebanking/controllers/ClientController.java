@@ -1,7 +1,9 @@
 package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.dtos.ClientDTO;
+import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
+import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +25,9 @@ import java.util.stream.Collectors;
 public class ClientController {
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     //método que retorna el listado de clientes
    //servlet
@@ -70,8 +77,14 @@ public class ClientController {
         }
 
 
+        Client client= new Client(firstName, lastName, email, passwordEncoder.encode(password));
+        clientRepository.save(client);
 
-        clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password)));
+        String number= "VIN-"+getRandomNumber(min,max);
+
+        Account currentAccount = new Account(number, LocalDate.now(), client);
+
+        accountRepository.save(currentAccount);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
 
@@ -83,6 +96,12 @@ public class ClientController {
         return new ClientDTO(clientRepository.findByEmail(authentication.getName()));
 
     }
+
+    public static int getRandomNumber(int min, int max){
+        return (int)((Math.random()*(max-min))+min);
+    }
+    int min=00000001;
+    int max=99999999;
 
 
 

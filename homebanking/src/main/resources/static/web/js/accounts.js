@@ -10,7 +10,6 @@ createApp({
     },
     methods: {
         getData() {
-
             axios.get("/api/clients/current")
                 .then((response) => {
                     //get client ifo
