@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,6 +38,12 @@ public class Account {
         date= LocalDate.now();
     }
 
+    public Account(String number, LocalDate date, Client client1){
+        this.number= number;
+        balance= 0.00;
+        this.date= date;
+        this.client= client1;
+    }
 
 
     public String getNumber() {

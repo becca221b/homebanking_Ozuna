@@ -13,8 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,6 +27,7 @@ public class AccountController {
 
     private Client client;
 
+    @Autowired
     private ClientRepository clientRepository;
 
 
@@ -45,15 +48,16 @@ public class AccountController {
         return new AccountDTO(accountRepository.findById(id).orElse(null));
     }
 
-
+    public static int getRandomNumber(int min, int max){
+        return (int)((Math.random()*(max-min))+min);
+    }
+    int min=00000001;
+    int max=99999999;
 
     @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.POST)
+    public ResponseEntity<Object> createAccount(Authentication authentication) {
 
-    public ResponseEntity<Object> createAccount(
-            /*
-            @RequestParam String number, @RequestParam LocalDate date,
-
-            @RequestParam double balance*/) {
+       Client client= clientRepository.findByEmail(authentication.getName());
 
 
         /*
@@ -63,18 +67,21 @@ public class AccountController {
 
         }*/
 
+        String number= "VIN-"+getRandomNumber(min,max);
 
-        accountRepository.save(new Account("VIN005",0.00));
+        Account currentAccount = new Account(number, LocalDate.now(), client);
 
+        accountRepository.save(currentAccount);
+        clientRepository.save(client);
         return new ResponseEntity<>("201 creada",HttpStatus.CREATED);
-
     }
+    /*
 
     @RequestMapping("accounts/current")
     public AccountDTO getAccount(Authentication authentication) {
 
         return new AccountDTO(accountRepository.findByNumber(authentication.getName()));
-    }
+    }*/
 
 
 }
