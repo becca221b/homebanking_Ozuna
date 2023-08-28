@@ -20,7 +20,7 @@ public class Card {
 
     private CardColor color;
 
-    private long number;
+    private String number;
 
     private LocalDate fromDate;
 
@@ -34,7 +34,7 @@ public class Card {
 
     public Card(){}
 
-    public Card(Client client, CardType type, CardColor color, long number, int cvv){
+    public Card(Client client, CardType type, CardColor color, String number, int cvv){
         cardholder = client.getFirstName()+" "+client.getLastName();
         fromDate= LocalDate.now();
         thruDate = fromDate.plusYears(5);
@@ -68,11 +68,11 @@ public class Card {
         this.color = color;
     }
 
-    public long getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(long number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 

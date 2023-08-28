@@ -27,6 +27,10 @@ public class CardController {
     @Autowired
     CardRepository cardRepository;
 
+    public static int getRandomNumber(int min, int max){
+        return (int)((Math.random()*(max-min))+min);
+    }
+
 
     @RequestMapping(path = "/clients/current/cards", method = RequestMethod.POST)
     public ResponseEntity<Object> createCard(@RequestParam CardType cardType, @RequestParam CardColor cardColor,
@@ -40,7 +44,10 @@ public class CardController {
 
         }
 
-        Card currentCard= new Card(client,cardType,cardColor,3333121254324443L,123);
+        int cvv= getRandomNumber(001,999);
+        String number= getRandomNumber(0001,9999)+"-"+getRandomNumber(0001,9999)+"-"+getRandomNumber(0001,9999)+"-"+getRandomNumber(0001,9999);
+
+        Card currentCard= new Card(client,cardType,cardColor,"3333-1212-5432-4443",cvv);
 
         client.addCard(currentCard);
         cardRepository.save(currentCard);

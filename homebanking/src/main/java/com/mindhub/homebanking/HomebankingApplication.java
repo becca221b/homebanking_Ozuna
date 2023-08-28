@@ -93,9 +93,9 @@ public class HomebankingApplication {
             clientLoanRepository.save(clientLoan3);
             clientLoanRepository.save(clientLoan4);
 
-			Card card1= new Card(client1,CardType.DEBIT,CardColor.GOLD,1234567891123456L,123);
-			Card card2= new Card(client1,CardType.CREDIT,CardColor.TITANIUM,1234567890123456L,789);
-			Card card3= new Card(client2,CardType.CREDIT,CardColor.SILVER,1234567890000000L,456);
+			Card card1= new Card(client1,CardType.DEBIT,CardColor.GOLD,"1234-5678-9112-3456",123);
+			Card card2= new Card(client1,CardType.CREDIT,CardColor.TITANIUM,"1234-5678-9012-3456",789);
+			Card card3= new Card(client2,CardType.CREDIT,CardColor.SILVER,"1234-5678-9000-0000",456);
 
 			client1.addCard(card1);
 			client1.addCard(card2);

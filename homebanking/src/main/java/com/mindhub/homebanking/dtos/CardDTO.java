@@ -17,7 +17,7 @@ public class CardDTO {
 
     private CardColor color;
 
-    private long number;
+    private String number;
 
     private LocalDate fromDate;
 
@@ -53,7 +53,7 @@ public class CardDTO {
         return color;
     }
 
-    public long getNumber() {
+    public String getNumber() {
         return number;
     }
 
