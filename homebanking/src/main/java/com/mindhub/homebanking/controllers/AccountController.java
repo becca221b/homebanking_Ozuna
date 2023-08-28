@@ -60,12 +60,12 @@ public class AccountController {
        Client client= clientRepository.findByEmail(authentication.getName());
 
 
-        /*
+
         if (client.getAccounts().size()==3) {
 
             return new ResponseEntity<>("403 prohibido", HttpStatus.FORBIDDEN);
 
-        }*/
+        }
 
         String number= "VIN-"+getRandomNumber(min,max);
 
