@@ -75,6 +75,10 @@ public class AccountController {
 
         String number= "VIN"+getRandomNumber(min,max);
 
+        while(accountRepository.existsByNumber(number)){
+            number= "VIN"+getRandomNumber(min,max);
+        }
+
         Account currentAccount = new Account(number, LocalDate.now(), client);
 
         accountRepository.save(currentAccount);
