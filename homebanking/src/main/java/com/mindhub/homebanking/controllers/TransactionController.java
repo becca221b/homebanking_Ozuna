@@ -31,7 +31,7 @@ public class TransactionController {
 
     @Autowired
     ClientRepository clientRepository;
-    
+
 
     @Transactional
     @RequestMapping(path = "/transactions", method = RequestMethod.POST)
