@@ -46,6 +46,14 @@ public class AccountController {
         return new AccountDTO(accountRepository.findById(id).orElse(null));
     }
 
+    @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.GET)
+    public List<AccountDTO> getClientAccounts (Authentication authentication)
+    {
+        Client client = this.clientRepository.findByEmail(authentication.getName());
+
+        return client.getAccounts().stream().map(AccountDTO::new).collect(Collectors.toList());
+    }
+
     public static int getRandomNumber(int min, int max){
         return (int)((Math.random()*(max-min))+min);
     }
@@ -65,7 +73,7 @@ public class AccountController {
 
         }
 
-        String number= "VIN-"+getRandomNumber(min,max);
+        String number= "VIN"+getRandomNumber(min,max);
 
         Account currentAccount = new Account(number, LocalDate.now(), client);
 
@@ -73,13 +81,5 @@ public class AccountController {
         clientRepository.save(client);
         return new ResponseEntity<>("201 creada",HttpStatus.CREATED);
     }
-    /*
-
-    @RequestMapping("accounts/current")
-    public AccountDTO getAccount(Authentication authentication) {
-
-        return new AccountDTO(accountRepository.findByNumber(authentication.getName()));
-    }*/
-
 
 }
