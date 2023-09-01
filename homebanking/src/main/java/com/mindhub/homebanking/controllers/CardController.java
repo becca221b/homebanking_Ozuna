@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class CardController {
     @Autowired
-    ClientRepository clientRepository;
+    private ClientRepository clientRepository;
 
     @Autowired
-    CardRepository cardRepository;
+    private CardRepository cardRepository;
 
     public static int getRandomNumber(int min, int max){
         return (int)((Math.random()*(max-min))+min);
@@ -44,10 +44,15 @@ public class CardController {
 
         }
 
-        int cvv= getRandomNumber(001,999);
-        String number= getRandomNumber(0001,9999)+"-"+getRandomNumber(0001,9999)+"-"+getRandomNumber(0001,9999)+"-"+getRandomNumber(0001,9999);
+        String number;
+        do{
+            number= getRandomNumber(0001,9999)+"-"+getRandomNumber(0001,9999)+"-"+getRandomNumber(0001,9999)+"-"+getRandomNumber(0001,9999);
+        }while(cardRepository.existsByNumber(number));
 
-        Card currentCard= new Card(client,cardType,cardColor,"3333-1212-5432-4443",cvv);
+        int cvv= getRandomNumber(001,999);
+
+
+        Card currentCard= new Card(client,cardType,cardColor,number,cvv);
 
         client.addCard(currentCard);
         cardRepository.save(currentCard);
@@ -55,13 +60,5 @@ public class CardController {
 
         return new ResponseEntity<>("201 creada",HttpStatus.CREATED);
     }
-
-    /*@RequestMapping("cards/current")
-    public ClientDTO getClient(Authentication authentication) {
-
-        return new ClientDTO(clientRepository.findByEmail(authentication.getName()));
-
-    }*/
-
 
 }

@@ -23,8 +23,6 @@ public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
 
-    private Client client;
-
     @Autowired
     private ClientRepository clientRepository;
 
@@ -57,8 +55,7 @@ public class AccountController {
     public static int getRandomNumber(int min, int max){
         return (int)((Math.random()*(max-min))+min);
     }
-    int min=00000001;
-    int max=99999999;
+
 
     @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.POST)
     public ResponseEntity<Object> createAccount(Authentication authentication) {
@@ -73,11 +70,11 @@ public class AccountController {
 
         }
 
-        String number= "VIN"+getRandomNumber(min,max);
+        String number= "VIN";
 
-        while(accountRepository.existsByNumber(number)){
-            number= "VIN"+getRandomNumber(min,max);
-        }
+       do{
+            number= "VIN"+getRandomNumber(00000001,99999999);
+        } while(accountRepository.existsByNumber(number));
 
         Account currentAccount = new Account(number, LocalDate.now(), client);
 

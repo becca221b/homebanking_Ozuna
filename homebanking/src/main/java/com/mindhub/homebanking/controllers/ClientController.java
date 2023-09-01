@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+import static com.mindhub.homebanking.controllers.AccountController.getRandomNumber;
 
 
 @RestController
@@ -80,7 +80,7 @@ public class ClientController {
         Client client= new Client(firstName, lastName, email, passwordEncoder.encode(password));
         clientRepository.save(client);
 
-        String number= "VIN-"+getRandomNumber(min,max);
+        String number= "VIN"+getRandomNumber(00000001,99999999);
 
         Account currentAccount = new Account(number, LocalDate.now(), client);
 
@@ -96,13 +96,5 @@ public class ClientController {
         return new ClientDTO(clientRepository.findByEmail(authentication.getName()));
 
     }
-
-    public static int getRandomNumber(int min, int max){
-        return (int)((Math.random()*(max-min))+min);
-    }
-    int min=00000001;
-    int max=99999999;
-
-
 
 }

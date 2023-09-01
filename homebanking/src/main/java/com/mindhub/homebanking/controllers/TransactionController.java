@@ -30,7 +30,7 @@ public class TransactionController {
     private TransactionRepository transactionRepository;
 
     @Autowired
-    ClientRepository clientRepository;
+    private ClientRepository clientRepository;
 
 
     @Transactional
