@@ -2,6 +2,8 @@ package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.models.Loan;
+import com.mindhub.homebanking.models.Transaction;
+import com.mindhub.homebanking.models.TransactionType;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.repositories.LoanRepository;
@@ -33,7 +35,9 @@ public class LoanController {
             @RequestParam int payments, @RequestParam String accountToNumber,
             Authentication authentication) {
 
-        //Client client= clientRepository.findByEmail(authentication.getName());
+        Loan loan= loanRepository.findByName(name);
+
+        Client client= clientRepository.findByEmail(authentication.getName()
 
 
         if (amount<=0 || payments<=0) {
@@ -49,8 +53,24 @@ public class LoanController {
         }
 
      //VERIFICAR QUE EL PRESTAMO EXISTA
+        if(loan==null){
+            return new ResponseEntity<>("Préstamo no existe", HttpStatus.FORBIDDEN);
+        }
 
-        if(amount>)
+        if(amount>loan.getMaxAmount()){
+            return new ResponseEntity<>("El monto solicitado supera el monto máximo", HttpStatus.FORBIDDEN);
+        }
+
+        if (accountRepository.findByNumber(accountToNumber)==null) {
+
+            return new ResponseEntity<>("La cuenta de destino no existe", HttpStatus.FORBIDDEN);
+        }
+
+        if(!client.getAccounts().contains(accountRepository.findByNumber(accountToNumber))){
+            return new ResponseEntity<>("La cuenta de destino no pertenece al cliente", HttpStatus.FORBIDDEN);
+        }
+
+        Transaction loanTransaction= new Transaction(amount,name+" loan approved", TransactionType.CREDIT);
 
 
         return new ResponseEntity<>(HttpStatus.CREATED);
