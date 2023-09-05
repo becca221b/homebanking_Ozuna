@@ -15,14 +15,13 @@ public class LoanApplicationDTO {
     int payments;
 
     String accountToNumber;
-
+    /*
     @RequestMapping(value="/api/loans", method= RequestMethod.POST)
 
-    public ResponseEntity<String> addLoan(@RequestBody Loan loan,
-                                          Authentication authentication) {
+    public ResponseEntity<String> addLoan(@RequestBody Loan loan) {
 
         loanRepository.save(loan);
 
-    }
+    }*/
 
 }
