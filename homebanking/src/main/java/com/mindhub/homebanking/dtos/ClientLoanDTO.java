@@ -1,14 +1,8 @@
 package com.mindhub.homebanking.dtos;
 
-import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.models.ClientLoan;
-import com.mindhub.homebanking.models.Loan;
 
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.mindhub.homebanking.models.ClientLoan;
+
 
 public class ClientLoanDTO {
 
@@ -21,9 +15,6 @@ public class ClientLoanDTO {
     double amount;
 
     double payments;
-
-
-
 
 
     public ClientLoanDTO(ClientLoan clientLoan){

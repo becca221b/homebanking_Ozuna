@@ -7,13 +7,17 @@ import com.mindhub.homebanking.models.TransactionType;
 import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 import com.mindhub.homebanking.repositories.LoanRepository;
+import com.mindhub.homebanking.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping("/api")
@@ -28,6 +32,11 @@ public class LoanController {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Transactional
+    @RequestMapping(path = "/loans", method = RequestMethod.POST)
     public ResponseEntity<Object> askLoan(
 
             @RequestParam double amount, @RequestParam String name,
@@ -37,7 +46,7 @@ public class LoanController {
 
         Loan loan= loanRepository.findByName(name);
 
-        Client client= clientRepository.findByEmail(authentication.getName()
+        Client client= clientRepository.findByEmail(authentication.getName());
 
 
         if (amount<=0 || payments<=0) {
@@ -71,6 +80,11 @@ public class LoanController {
         }
 
         Transaction loanTransaction= new Transaction(amount,name+" loan approved", TransactionType.CREDIT);
+        transactionRepository.save(loanTransaction);
+        double saldoSuma= accountRepository.findByNumber(accountToNumber).getBalance()+amount;
+        accountRepository.findByNumber(accountToNumber).setBalance(saldoSuma);
+        accountRepository.save(accountRepository.findByNumber(accountToNumber));
+        accountRepository.findByNumber(accountToNumber).addTransaction(loanTransaction);
 
 
         return new ResponseEntity<>(HttpStatus.CREATED);
