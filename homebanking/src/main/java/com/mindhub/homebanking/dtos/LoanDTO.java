@@ -1,31 +1,48 @@
 package com.mindhub.homebanking.dtos;
 
-import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Loan;
-import com.mindhub.homebanking.repositories.LoanRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LoanDTO {
 
-    @Autowired
-    LoanRepository loanRepository;
+    private long id;
+    private String name;
+    private double maxAmount;
+    private List<Integer> payments= new ArrayList<>();
+    private Set<ClientLoanDTO> clientLoans  = new HashSet<>();
 
-    @RequestMapping(value="/loans", method= RequestMethod.GET)
+    public LoanDTO(){ }
 
-    public List<LoanDTO> getLoans(){
-            List<Loan> loanList= loanRepository.findAll();
-
-            List<LoanDTO> loanDTOList=
-                loanList.stream().map(loan-> new LoanDTO()).collect(Collectors.toList());
-            return loanDTOList;
+    public LoanDTO(Loan loan){
+        this.id= loan.getId();
+        this.name= loan.getName();
+        this.maxAmount= loan.getMaxAmount();
+        this.payments= loan.getPayments();
+        this.clientLoans= loan.getClientLoans().stream().map(clientLoan -> new ClientLoanDTO(clientLoan)).collect(Collectors.toSet());
     }
 
+    public long getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public double getMaxAmount() {
+        return maxAmount;
+    }
+
+    public List<Integer> getPayments() {
+        return payments;
+    }
+
+    public Set<ClientLoanDTO> getClientLoans() {
+        return clientLoans;
+    }
 }

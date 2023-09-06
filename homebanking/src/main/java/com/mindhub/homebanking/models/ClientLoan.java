@@ -33,11 +33,13 @@ public class ClientLoan {
         this.payments= payments;
     }
 
-
-
-    public ClientLoan(){
-
+    public ClientLoan(double amount, int payments, Client client, Loan loan){
+        this.amount= amount;
+        this.payments= payments;
     }
+
+
+    public ClientLoan(){}
 
     public long getId() {
         return id;

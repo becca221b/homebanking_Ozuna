@@ -1,2 +1,3 @@
-package com.mindhub.homebanking.services.implementations;public class ClientLoanServiceImplementations {
+package com.mindhub.homebanking.services.implementations;
+public class ClientServiceImplementations {
 }

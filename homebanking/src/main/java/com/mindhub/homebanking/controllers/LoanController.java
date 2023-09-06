@@ -1,17 +1,18 @@
 package com.mindhub.homebanking.controllers;
 
+import com.mindhub.homebanking.dtos.LoanApplicationDTO;
+import com.mindhub.homebanking.dtos.LoanDTO;
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -32,17 +33,27 @@ public class LoanController {
     @Autowired
     private ClientLoanRepository clientLoanRepository;
 
+    @RequestMapping(value="/loans", method= RequestMethod.GET)
+
+    public List<LoanDTO> getLoans(){
+        List<Loan> loanList= loanRepository.findAll();
+
+        List<LoanDTO> loanDTOList=
+                loanList.stream().map(LoanDTO::new).collect(Collectors.toList());
+        return loanDTOList;
+    }
+
     @Transactional
     @RequestMapping(path = "/loans", method = RequestMethod.POST)
-    public ResponseEntity<Object> askLoan(
+    public ResponseEntity<Object> askLoan(@RequestBody LoanApplicationDTO loanApplicationDTO,
+                                          Authentication authentication) {
 
-            @RequestParam double amount, @RequestParam String name,
+        double amount= loanApplicationDTO.getAmount();
+        int payments= loanApplicationDTO.getPayments();
+        String accountToNumber= loanApplicationDTO.getAccountToNumber();
+        Loan loan= loanRepository.findById(loanApplicationDTO.getLoanId()).orElse(null);
 
-            @RequestParam int payments, @RequestParam String accountToNumber,
-            Authentication authentication) {
-
-        Loan loan= loanRepository.findByName(name);
-
+        //VERIFICAR QUE EL CLIENTE ESTE AUTENTICADO Y EXISTA DENTRO DEL CLIENTREPOSITORY
         Client client= clientRepository.findByEmail(authentication.getName());
 
 
@@ -51,14 +62,13 @@ public class LoanController {
             return new ResponseEntity<>("El monto y cuotas debe ser mayor a cero", HttpStatus.FORBIDDEN);
 
         }
-
+        /*
         if (String.valueOf(amount).isBlank() || String.valueOf(payments).isBlank() || accountToNumber.isEmpty()) {
 
             return new ResponseEntity<>("Debes completar todos los campos", HttpStatus.FORBIDDEN);
 
-        }
+        }*/
 
-     //VERIFICAR QUE EL PRESTAMO EXISTA
         if(loan==null){
             return new ResponseEntity<>("Préstamo no existe", HttpStatus.FORBIDDEN);
         }
@@ -68,7 +78,8 @@ public class LoanController {
         }
 
         if (accountRepository.findByNumber(accountToNumber)==null) {
-
+            System.out.println(accountToNumber);
+            System.out.println(accountRepository.findByNumber(accountToNumber));
             return new ResponseEntity<>("La cuenta de destino no existe", HttpStatus.FORBIDDEN);
         }
 
@@ -76,21 +87,17 @@ public class LoanController {
             return new ResponseEntity<>("La cuenta de destino no pertenece al cliente", HttpStatus.FORBIDDEN);
         }
 
-        Transaction loanTransaction= new Transaction(amount,name+" loan approved", TransactionType.CREDIT);
+        Transaction loanTransaction= new Transaction(amount,loan.getName()+" loan approved", TransactionType.CREDIT, accountRepository.findByNumber(accountToNumber));
         transactionRepository.save(loanTransaction);
         double saldoSuma= accountRepository.findByNumber(accountToNumber).getBalance()+amount;
         accountRepository.findByNumber(accountToNumber).setBalance(saldoSuma);
         accountRepository.save(accountRepository.findByNumber(accountToNumber));
+        //VERIFICAR
         accountRepository.findByNumber(accountToNumber).addTransaction(loanTransaction);
 
-        ClientLoan clientLoan= new ClientLoan(amount,payments);
-
-        client.addClientLoan(clientLoan);
-
-        loan.addClientLoan(clientLoan);
+        ClientLoan clientLoan= new ClientLoan(amount,payments,client,loan);
 
         clientLoanRepository.save(clientLoan);
-
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

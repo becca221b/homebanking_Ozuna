@@ -39,6 +39,18 @@ public class Transaction {
         this.type= type;
     }
 
+    public Transaction(double amount, String description, TransactionType type, Account account){
+        this.date= LocalDateTime.now();
+        if (type==TransactionType.DEBIT) {
+            this.amount= amount*(-1);
+        }else{
+            this.amount= amount;
+        }
+        this.description= description;
+        this.type= type;
+        this.account= account;
+    }
+
     public LocalDateTime getDate() {
         return date;
     }
