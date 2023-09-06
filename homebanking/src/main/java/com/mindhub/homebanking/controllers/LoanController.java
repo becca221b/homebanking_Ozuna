@@ -53,21 +53,23 @@ public class LoanController {
         String accountToNumber= loanApplicationDTO.getAccountToNumber();
         Loan loan= loanRepository.findById(loanApplicationDTO.getLoanId()).orElse(null);
 
-        //VERIFICAR QUE EL CLIENTE ESTE AUTENTICADO Y EXISTA DENTRO DEL CLIENTREPOSITORY
-        Client client= clientRepository.findByEmail(authentication.getName());
+        if(!clientRepository.existsByEmail(authentication.getName())){
+            return new ResponseEntity<>("Debe iniciar sesión", HttpStatus.FORBIDDEN);
+        }
 
+        Client client= clientRepository.findByEmail(authentication.getName());
 
         if (amount<=0 || payments<=0) {
 
             return new ResponseEntity<>("El monto y cuotas debe ser mayor a cero", HttpStatus.FORBIDDEN);
 
         }
-        /*
+
         if (String.valueOf(amount).isBlank() || String.valueOf(payments).isBlank() || accountToNumber.isEmpty()) {
 
             return new ResponseEntity<>("Debes completar todos los campos", HttpStatus.FORBIDDEN);
 
-        }*/
+        }
 
         if(loan==null){
             return new ResponseEntity<>("Préstamo no existe", HttpStatus.FORBIDDEN);
@@ -92,7 +94,7 @@ public class LoanController {
         double saldoSuma= accountRepository.findByNumber(accountToNumber).getBalance()+amount;
         accountRepository.findByNumber(accountToNumber).setBalance(saldoSuma);
         accountRepository.save(accountRepository.findByNumber(accountToNumber));
-        //VERIFICAR
+
         accountRepository.findByNumber(accountToNumber).addTransaction(loanTransaction);
 
         ClientLoan clientLoan= new ClientLoan(amount,payments,client,loan);
