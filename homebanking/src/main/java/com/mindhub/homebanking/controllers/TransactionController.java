@@ -1,12 +1,13 @@
 package com.mindhub.homebanking.controllers;
 
 
+import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.models.Transaction;
 import com.mindhub.homebanking.models.TransactionType;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
-import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +25,13 @@ import javax.transaction.Transactional;
 public class TransactionController {
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    private TransactionService transactionService;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
 
     @Transactional
@@ -43,7 +44,9 @@ public class TransactionController {
             @RequestParam String accountFromNumber, @RequestParam String accountToNumber,
             Authentication authentication) {
 
-        Client client= clientRepository.findByEmail(authentication.getName());
+        Client client= clientService.findByEmail(authentication.getName());
+        Account accountDestiny= accountService.findByNumber(accountToNumber);
+        Account accountOrigin= accountService.findByNumber(accountFromNumber);
 
 
         if (amount==0 || description.isBlank() || accountFromNumber.isBlank() || accountToNumber.isEmpty()) {
@@ -54,19 +57,19 @@ public class TransactionController {
 
 
 
-        if (accountToNumber ==  accountFromNumber) {
+        if (accountToNumber.equals(accountFromNumber)) {
 
             return new ResponseEntity<>("La cuenta de destino es igual a la de origen", HttpStatus.FORBIDDEN);
 
         }
 
-        if (accountRepository.findByNumber(accountToNumber)==null) {
+        if (accountDestiny==null) {
 
             return new ResponseEntity<>("La cuenta de destino no existe", HttpStatus.FORBIDDEN);
 
         }
 
-        if (accountRepository.findByNumber(accountFromNumber).getBalance()<=amount) {
+        if (accountOrigin.getBalance()<=amount) {
 
             return new ResponseEntity<>("Saldo insuficiente", HttpStatus.FORBIDDEN);
 
@@ -78,18 +81,18 @@ public class TransactionController {
         Transaction creditTransaction= new Transaction(amount,description_destiny, TransactionType.CREDIT);
 
 
-        transactionRepository.save(debitTransaction);
-        double saldoResta= accountRepository.findByNumber(accountFromNumber).getBalance()-amount;
-        accountRepository.findByNumber(accountFromNumber).setBalance(saldoResta);
-        accountRepository.save(accountRepository.findByNumber(accountFromNumber));
-        accountRepository.findByNumber(accountFromNumber).addTransaction(debitTransaction);
+        transactionService.saveTransaction(debitTransaction);
+        double saldoResta= accountOrigin.getBalance()-amount;
+        accountOrigin.setBalance(saldoResta);
+        accountService.saveAccount(accountOrigin);
+        accountOrigin.addTransaction(debitTransaction);
 
 
-        transactionRepository.save(creditTransaction);
-        double saldoSuma= accountRepository.findByNumber(accountToNumber).getBalance()+amount;
-        accountRepository.findByNumber(accountToNumber).setBalance(saldoSuma);
-        accountRepository.save(accountRepository.findByNumber(accountToNumber));
-        accountRepository.findByNumber(accountToNumber).addTransaction(creditTransaction);
+        transactionService.saveTransaction(creditTransaction);
+        double saldoSuma= accountDestiny.getBalance()+amount;
+        accountDestiny.setBalance(saldoSuma);
+        accountService.saveAccount(accountDestiny);
+        accountDestiny.addTransaction(creditTransaction);
 
 
         return new ResponseEntity<>(HttpStatus.CREATED);

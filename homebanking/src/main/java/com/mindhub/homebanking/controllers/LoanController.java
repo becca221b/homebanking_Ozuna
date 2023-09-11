@@ -5,7 +5,9 @@ import com.mindhub.homebanking.dtos.LoanDTO;
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.*;
 import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientLoanService;
 import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.services.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api")
@@ -24,7 +26,7 @@ public class LoanController {
     private AccountService accountService;
 
     @Autowired
-    private LoanRepository loanRepository;
+    private LoanService loanService;
 
     @Autowired
     private ClientService clientService;
@@ -33,11 +35,11 @@ public class LoanController {
     private TransactionRepository transactionRepository;
 
     @Autowired
-    private ClientLoanRepository clientLoanRepository;
+    private ClientLoanService clientLoanService;
 
     @RequestMapping(value="/loans", method= RequestMethod.GET)
     public List<LoanDTO> getLoans(){
-        return loanRepository.findAll().stream().map(LoanDTO::new).collect(Collectors.toList());
+        return loanService.getLoans();
     }
 
     @Transactional
@@ -48,7 +50,8 @@ public class LoanController {
         double amount= loanApplicationDTO.getAmount();
         int payments= loanApplicationDTO.getPayments();
         String accountToNumber= loanApplicationDTO.getAccountToNumber();
-        Loan loan= loanRepository.findById(loanApplicationDTO.getLoanId()).orElse(null);
+        Loan loan= loanService.findById(loanApplicationDTO.getLoanId());
+        Account account= accountService.findByNumber(accountToNumber);
 
         if(!clientService.existsByEmail(authentication.getName())){
             return new ResponseEntity<>("Debe iniciar sesión", HttpStatus.FORBIDDEN);
@@ -76,27 +79,26 @@ public class LoanController {
             return new ResponseEntity<>("El monto solicitado supera el monto máximo", HttpStatus.FORBIDDEN);
         }
 
-        if (accountService.findByNumber(accountToNumber)==null) {
-            System.out.println(accountToNumber);
-            System.out.println(accountService.findByNumber(accountToNumber));
+        if (account==null) {
             return new ResponseEntity<>("La cuenta de destino no existe", HttpStatus.FORBIDDEN);
         }
 
-        if(!client.getAccounts().contains(accountService.findByNumber(accountToNumber))){
+        if(!client.getAccounts().contains(account)){
             return new ResponseEntity<>("La cuenta de destino no pertenece al cliente", HttpStatus.FORBIDDEN);
         }
 
-        Transaction loanTransaction= new Transaction(amount,loan.getName()+" loan approved", TransactionType.CREDIT, accountService.findByNumber(accountToNumber));
-        transactionRepository.save(loanTransaction);
-        double saldoSuma= accountService.findByNumber(accountToNumber).getBalance()+amount;
-        accountService.findByNumber(accountToNumber).setBalance(saldoSuma);
-        accountService.saveAccount(accountService.findByNumber(accountToNumber));
-
-        accountService.findByNumber(accountToNumber).addTransaction(loanTransaction);
+        double saldoSuma= account.getBalance()+amount;
+        account.setBalance(saldoSuma);
 
         ClientLoan clientLoan= new ClientLoan(amount,payments,client,loan);
+        clientLoanService.saveClientLoan(clientLoan);
 
-        clientLoanRepository.save(clientLoan);
+        Transaction loanTransaction= new Transaction(amount,loan.getName()+" loan approved", TransactionType.CREDIT, accountService.findByNumber(accountToNumber));
+        transactionRepository.save(loanTransaction);
+
+        client.addClientLoan(clientLoan);
+        loan.addClientLoan(clientLoan);
+
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
