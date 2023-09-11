@@ -4,6 +4,8 @@ import com.mindhub.homebanking.dtos.LoanApplicationDTO;
 import com.mindhub.homebanking.dtos.LoanDTO;
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.repositories.*;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +21,13 @@ import java.util.stream.Collectors;
 public class LoanController {
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Autowired
     private LoanRepository loanRepository;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
     private TransactionRepository transactionRepository;
@@ -34,13 +36,8 @@ public class LoanController {
     private ClientLoanRepository clientLoanRepository;
 
     @RequestMapping(value="/loans", method= RequestMethod.GET)
-
     public List<LoanDTO> getLoans(){
-        List<Loan> loanList= loanRepository.findAll();
-
-        List<LoanDTO> loanDTOList=
-                loanList.stream().map(LoanDTO::new).collect(Collectors.toList());
-        return loanDTOList;
+        return loanRepository.findAll().stream().map(LoanDTO::new).collect(Collectors.toList());
     }
 
     @Transactional
@@ -53,11 +50,11 @@ public class LoanController {
         String accountToNumber= loanApplicationDTO.getAccountToNumber();
         Loan loan= loanRepository.findById(loanApplicationDTO.getLoanId()).orElse(null);
 
-        if(!clientRepository.existsByEmail(authentication.getName())){
+        if(!clientService.existsByEmail(authentication.getName())){
             return new ResponseEntity<>("Debe iniciar sesión", HttpStatus.FORBIDDEN);
         }
 
-        Client client= clientRepository.findByEmail(authentication.getName());
+        Client client= clientService.findByEmail(authentication.getName());
 
         if (amount<=0 || payments<=0) {
 
@@ -79,23 +76,23 @@ public class LoanController {
             return new ResponseEntity<>("El monto solicitado supera el monto máximo", HttpStatus.FORBIDDEN);
         }
 
-        if (accountRepository.findByNumber(accountToNumber)==null) {
+        if (accountService.findByNumber(accountToNumber)==null) {
             System.out.println(accountToNumber);
-            System.out.println(accountRepository.findByNumber(accountToNumber));
+            System.out.println(accountService.findByNumber(accountToNumber));
             return new ResponseEntity<>("La cuenta de destino no existe", HttpStatus.FORBIDDEN);
         }
 
-        if(!client.getAccounts().contains(accountRepository.findByNumber(accountToNumber))){
+        if(!client.getAccounts().contains(accountService.findByNumber(accountToNumber))){
             return new ResponseEntity<>("La cuenta de destino no pertenece al cliente", HttpStatus.FORBIDDEN);
         }
 
-        Transaction loanTransaction= new Transaction(amount,loan.getName()+" loan approved", TransactionType.CREDIT, accountRepository.findByNumber(accountToNumber));
+        Transaction loanTransaction= new Transaction(amount,loan.getName()+" loan approved", TransactionType.CREDIT, accountService.findByNumber(accountToNumber));
         transactionRepository.save(loanTransaction);
-        double saldoSuma= accountRepository.findByNumber(accountToNumber).getBalance()+amount;
-        accountRepository.findByNumber(accountToNumber).setBalance(saldoSuma);
-        accountRepository.save(accountRepository.findByNumber(accountToNumber));
+        double saldoSuma= accountService.findByNumber(accountToNumber).getBalance()+amount;
+        accountService.findByNumber(accountToNumber).setBalance(saldoSuma);
+        accountService.saveAccount(accountService.findByNumber(accountToNumber));
 
-        accountRepository.findByNumber(accountToNumber).addTransaction(loanTransaction);
+        accountService.findByNumber(accountToNumber).addTransaction(loanTransaction);
 
         ClientLoan clientLoan= new ClientLoan(amount,payments,client,loan);
 
