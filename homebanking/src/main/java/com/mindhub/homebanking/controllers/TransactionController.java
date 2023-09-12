@@ -44,36 +44,56 @@ public class TransactionController {
             @RequestParam String accountFromNumber, @RequestParam String accountToNumber,
             Authentication authentication) {
 
+        accountToNumber= accountToNumber.replace(" ","");
+        accountFromNumber= accountFromNumber.replace(" ","");
+
+        if(!clientService.existsByEmail(authentication.getName())){
+            return new ResponseEntity<>("Debe iniciar sesión", HttpStatus.FORBIDDEN);
+        }
+
         Client client= clientService.findByEmail(authentication.getName());
         Account accountDestiny= accountService.findByNumber(accountToNumber);
         Account accountOrigin= accountService.findByNumber(accountFromNumber);
 
 
-        if (amount==0 || description.isBlank() || accountFromNumber.isBlank() || accountToNumber.isEmpty()) {
-
-            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
-
+        if (amount<=0) {
+            return new ResponseEntity<>("Ammount must be more than 0", HttpStatus.FORBIDDEN);
+        }
+        if (description.isBlank()){
+            return new ResponseEntity<>("Description is missing", HttpStatus.FORBIDDEN);
+        }
+        if (accountFromNumber.isBlank()){
+            return new ResponseEntity<>("Source account number is missing", HttpStatus.FORBIDDEN);
+        }
+        if (accountToNumber.isEmpty()){
+            return new ResponseEntity<>("Target account number is missing", HttpStatus.FORBIDDEN);
         }
 
 
 
         if (accountToNumber.equals(accountFromNumber)) {
 
-            return new ResponseEntity<>("La cuenta de destino es igual a la de origen", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Source and target accounts are the same", HttpStatus.FORBIDDEN);
 
         }
 
         if (accountDestiny==null) {
 
-            return new ResponseEntity<>("La cuenta de destino no existe", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Target account doesnt exist", HttpStatus.FORBIDDEN);
 
         }
 
         if (accountOrigin.getBalance()<=amount) {
 
-            return new ResponseEntity<>("Saldo insuficiente", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Insufficient balance", HttpStatus.FORBIDDEN);
 
         }
+
+        if (!client.getAccounts().contains(accountOrigin)){
+            return new ResponseEntity<>("Source account doesnt belong to you", HttpStatus.FORBIDDEN);
+        }
+
+
         String description_origin= description+accountToNumber;
         String description_destiny= description+accountFromNumber;
 
