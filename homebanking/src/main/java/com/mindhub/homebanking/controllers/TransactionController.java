@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 
@@ -35,8 +32,7 @@ public class TransactionController {
 
 
     @Transactional
-    @RequestMapping(path = "/transactions", method = RequestMethod.POST)
-
+    @PostMapping("/transactions")
     public ResponseEntity<Object> createTransaction(
 
             @RequestParam double amount, @RequestParam String description,
@@ -70,7 +66,6 @@ public class TransactionController {
         }
 
 
-
         if (accountToNumber.equals(accountFromNumber)) {
 
             return new ResponseEntity<>("Source and target accounts are the same", HttpStatus.FORBIDDEN);
@@ -79,7 +74,7 @@ public class TransactionController {
 
         if (accountDestiny==null) {
 
-            return new ResponseEntity<>("Target account doesnt exist", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Target account doesn't exist", HttpStatus.FORBIDDEN);
 
         }
 
@@ -90,7 +85,7 @@ public class TransactionController {
         }
 
         if (!client.getAccounts().contains(accountOrigin)){
-            return new ResponseEntity<>("Source account doesnt belong to you", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Source account doesn't belong to you", HttpStatus.FORBIDDEN);
         }
 
 

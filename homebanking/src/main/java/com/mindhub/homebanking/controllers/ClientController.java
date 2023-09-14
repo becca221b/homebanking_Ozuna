@@ -31,22 +31,22 @@ public class ClientController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     //método que retorna el listado de clientes
    //servlet
-    @RequestMapping("/clients") //GET
+    @GetMapping("/clients")//GET
     public List<ClientDTO> getClients(){
         return clientService.getClientsDTO();
     }
-    @RequestMapping("/clients/{id}")
+
+    @GetMapping("/clients/{id}")
     public ClientDTO getClient(@PathVariable Long id){
         return clientService.getClientDTO(id);
     }
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @RequestMapping(path = "/clients", method = RequestMethod.POST)
-
+    @PostMapping("/clients")
     public ResponseEntity<Object> register(
 
             @RequestParam String firstName, @RequestParam String lastName,
@@ -93,7 +93,7 @@ public class ClientController {
 
     }
 
-    @RequestMapping("clients/current")
+    @GetMapping("clients/current")
     public ClientDTO getClient(Authentication authentication) {
 
         return new ClientDTO(clientService.findByEmail(authentication.getName()));

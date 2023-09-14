@@ -26,19 +26,18 @@ public class AccountController {
     @Autowired
     private ClientService clientService;
 
-
-    @RequestMapping("/accounts")//GET
+    @GetMapping("/accounts")
     //servlet
     public List<AccountDTO> getAccounts(){
         return accountService.getAccounts();
     }
 
-    @RequestMapping("/accounts/{id}")
+    @GetMapping("/accounts/{id}")
     public AccountDTO getAccount(@PathVariable Long id){
         return new AccountDTO(accountService.findById(id));
     }
 
-    @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.GET)
+    @GetMapping("/clients/current/accounts")
     public List<AccountDTO> getClientAccounts (Authentication authentication)
     {
         Client client = this.clientService.findByEmail(authentication.getName());
@@ -50,8 +49,7 @@ public class AccountController {
         return (int)((Math.random()*(max-min))+min);
     }
 
-
-    @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.POST)
+    @PostMapping("/clients/current/accounts")
     public ResponseEntity<Object> createAccount(Authentication authentication) {
 
        Client client= clientService.findByEmail(authentication.getName());
