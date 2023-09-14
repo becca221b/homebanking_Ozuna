@@ -26,8 +26,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	//runtimeOnly 'com.h2database:h2'
+
+	//Starter para testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+
 }
 
 tasks.named('test') {

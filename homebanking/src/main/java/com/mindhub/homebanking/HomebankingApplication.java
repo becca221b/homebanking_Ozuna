@@ -19,18 +19,20 @@ public class HomebankingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HomebankingApplication.class, args);
 	}
-
+	/*
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;*/
 
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository) {
 		return (args) -> {
 			// save a couple of customers
-
+			/*
 			Client client1= new Client("Melba", "Morel","melba@mindhub.com", passwordEncoder.encode("pass123"));
 			Client client2= new Client("Lionel","Messi","lio.10@yahoo.com.ar", passwordEncoder.encode("qatar2022"));
-
+			*/
+			Client client1= new Client("Melba", "Morel","melba@mindhub.com", "pass123");
+			Client client2= new Client("Lionel","Messi","lio.10@yahoo.com.ar", "qatar2022");
 
 			clientRepository.save(client1);
             clientRepository.save(client2);
