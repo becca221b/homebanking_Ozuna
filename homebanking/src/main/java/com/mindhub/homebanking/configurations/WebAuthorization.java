@@ -27,12 +27,18 @@ public class WebAuthorization {
 
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .antMatchers("/rest/**", "/h2-console").hasAuthority("ADMIN")
-                .antMatchers(HttpMethod.GET,"/api/clients").hasAuthority("CLIENT")
+
+                //.antMatchers("/web/accounts.html","/web/account.html","/web/loan-application.html","/web/cards.html","/web/created-card.html","/web/transfers.html").hasAuthority("CLIENT")
+
+                .antMatchers(HttpMethod.GET,"/api/clients/current/accounts","/api/clients/current").hasAuthority("CLIENT")
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/clients/current/accounts").hasAuthority("CLIENT")
+                .antMatchers(HttpMethod.POST, "/api/clients/current/accounts","/api/clients/current/cards","/api/loans","/api/transactions").hasAuthority("CLIENT")
                 .antMatchers(HttpMethod.GET, "/api/clients/current/accounts").hasAuthority("CLIENT")
                 .antMatchers("/web/index.html","/web/js/index.js","/web/css/style.css","/web/img/**").permitAll()
-                .antMatchers("/**").hasAuthority("CLIENT");
+                .antMatchers("/web/**").hasAuthority("CLIENT")
+
+                .antMatchers("/api/**").hasAuthority("ADMIN")
+                .antMatchers("/**").hasAuthority("ADMIN");
 
 
 
