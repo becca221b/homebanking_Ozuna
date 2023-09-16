@@ -65,12 +65,6 @@ public class LoanController {
 
         }
 
-        if (String.valueOf(amount).isBlank() || String.valueOf(payments).isBlank() || accountToNumber.isEmpty()) {
-
-            return new ResponseEntity<>("Debes completar todos los campos", HttpStatus.FORBIDDEN);
-
-        }
-
         if(loan==null){
             return new ResponseEntity<>("Préstamo no existe", HttpStatus.FORBIDDEN);
         }

@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
@@ -33,7 +32,7 @@ public class WebAuthorization {
                 .antMatchers(HttpMethod.GET,"/api/clients/current/accounts","/api/clients/current").hasAuthority("CLIENT")
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/clients/current/accounts","/api/clients/current/cards","/api/loans","/api/transactions").hasAuthority("CLIENT")
-                .antMatchers(HttpMethod.GET, "/api/clients/current/accounts").hasAuthority("CLIENT")
+                .antMatchers(HttpMethod.GET, "/api/clients/current/accounts","/api/loans","/api/accounts/{id}").hasAuthority("CLIENT")
                 .antMatchers("/web/index.html","/web/js/index.js","/web/css/style.css","/web/img/**").permitAll()
                 .antMatchers("/web/**").hasAuthority("CLIENT")
 
@@ -98,6 +97,4 @@ public class WebAuthorization {
     }
 
 
-
-    
 }
